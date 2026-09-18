@@ -1,0 +1,27 @@
+#version: "3.3"
+services:
+  edge-audio:
+    #build: .
+    image: $(edge-audio_TAG)
+    container_name: edge-audio
+    restart: unless-stopped
+    uts: host
+    devices:
+      - /dev/snd:/dev/snd
+    #group_add:
+    #  - audio
+    volumes:
+      - ./config:/app/config:ro
+      - ../recordings:/recordings
+      - ../logs/edge-audio:/logs
+      - ../metadata:/metadata
+    environment:
+      - AUDIO_CONFIG=/app/config/audio.yaml
+      - EDGE_CONTROLLER_URL=${EDGE_CONTROLLER_URL}
+      - EDGE_CONTROLLER_TIMEOUT=${EDGE_CONTROLLER_TIMEOUT}
+      - EDGE_SERVICE_ID=${EDGE_SERVICE_ID}
+      - EDGE_SERVICE_NAME=${EDGE_SERVICE_NAME}
+      - EDGE_SERVICE_VERSION=${EDGE_SERVICE_VERSION}
+      - EDGE_TIME_URL=${EDGE_TIME_URL}
+      - EDGE_TIME_TIMEOUT=${EDGE_TIME_TIMEOUT}
+      - EDGE_AUDIO_TIMING_DEBUG=${EDGE_AUDIO_TIMING_DEBUG}
