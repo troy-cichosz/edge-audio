@@ -368,6 +368,28 @@ def main():
             "channels": channel_metadata,
         }
 
+        evidence_envelope = build_evidence_envelope(
+            service=controller.service_id,
+            service_version=controller.service_version,
+            node_id=controller.node_id,
+            capture_id=capture_id,
+            timestamp=timestamp,
+            monotonic_start_ns=record_start_ns,
+            time_context=time_context,
+            raw_path=raw_path,
+            raw_sha256=raw_sha256,
+            processed_path=processed_path,
+            processed_sha256=processed_sha256,
+            duration_seconds=capture_cfg["chunk_seconds"],
+            sample_rate=capture_cfg["sample_rate"],
+            channels=capture_cfg["channels"],
+            processing={
+                "highpass_hz": processing_cfg["highpass_hz"],
+                "limiter_db": processing_cfg["limiter_db"],
+            },
+        )
+        metadata["evidence_envelope"] = evidence_envelope
+
         # -----------------------------------------------------
         # Save metadata sidecar
         # -----------------------------------------------------
