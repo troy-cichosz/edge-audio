@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import socket
+import uuid
 from datetime import datetime, timezone
 
 import soundfile as sf
@@ -98,3 +99,70 @@ def save_metadata(metadata, path, hostname, capture_id):
         file.write("\n")
 
     return full_path
+
+def build_evidence_envelope(
+    service,
+    service_version,
+    node_id,
+    capture_id,
+    timestamp,
+    monotonic_start_ns,
+    time_context,
+    raw_path,
+    raw_sha256,
+    processed_path,
+    processed_sha256,
+    duration_seconds,
+    sample_rate,
+    channels,
+    processing,
+):
+    """Build the Round 1 common evidence envelope for one audio capture."""
+    evidence_id = str(uuid.uuid4())
+    raw_artifact_id = f"{evidence_id}:raw"
+
+    return {
+        "schema": "ai-legal.evidence.envelope.v1",
+        "evidence_id": evidence_id,
+        "service": service,
+        "service_version": service_version,
+        "node_id": node_id,
+        "source": {},
+        "capture": {
+            "start": timestamp.isoformat(),
+            "end": None,
+            "monotonic_start_ns": monotonic_start_ns,
+            "time_semantics": "capture_boundary_reference_not_physical_sample",
+        },
+        "time_context": time_context,
+        "artifacts": [
+            {
+                "artifact_id": raw_artifact_id,
+                "role": "authoritative",
+                "filename": os.path.basename(raw_path),
+                "media_type": "audio/wav",
+                "size": os.path.getsize(raw_path),
+                "sha256": raw_sha256,
+            },
+            {
+                "artifact_id": f"{evidence_id}:processed",
+                "role": "derived",
+                "filename": os.path.basename(processed_path),
+                "media_type": "audio/wav",
+                "size": os.path.getsize(processed_path),
+                "sha256": processed_sha256,
+                "derived_from": raw_artifact_id,
+            },
+        ],
+        "configuration": None,
+        "derivation": {
+            "method": "edge-audio DSP processing",
+        },
+        "service_metadata": {
+            "capture_id": capture_id,
+            "duration_seconds": duration_seconds,
+            "sample_rate": sample_rate,
+            "channels": channels,
+            "processing": processing,
+        },
+    }
