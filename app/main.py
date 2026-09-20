@@ -15,6 +15,7 @@ from recorder import (
     save_audio,
     save_metadata,
     sha256_file,
+    build_evidence_envelope,
 )
 from time_context import TimeContextClient
 
