@@ -1,0 +1,242 @@
+diff --git a/edge-audio/app/main.py b/edge-audio/app/main.py
+index 8a47a62..632e120 100644
+--- a/edge-audio/app/main.py
++++ b/edge-audio/app/main.py
+@@ -66,12 +66,40 @@ def channel_config(config, channel_index):
+     return channels[channel_index]
+ 
+ 
+ def main():
+ 
++    # ---------------------------------------------------------
++    # Load local configuration
++    # ---------------------------------------------------------
++
+     config = load_config()
+ 
++    hostname = get_hostname()
++
++    # ---------------------------------------------------------
++    # Controller
++    # ---------------------------------------------------------
++
++    controller = ControllerClient()
++
++    controller.register()
++
++    controller_config = controller.get_configuration()
++
++    if controller_config:
++        logging.info(
++            "Controller configuration received: %s",
++            controller_config
++        )
++
++        config.update(controller_config)
++
++    # ---------------------------------------------------------
++    # Build runtime configuration
++    # ---------------------------------------------------------
++
+     capture_cfg = config["capture"]
+ 
+     processing_cfg = config["processing"]
+ 
+     dsp_cfg = {
+@@ -82,25 +110,23 @@ def main():
+ 
+     audio = AudioCapture(capture_cfg)
+ 
+     dsp = DSP(dsp_cfg)
+ 
+-    hostname = get_hostname()
+-
+-    controller = ControllerClient()
+-
+-    controller.register()
++    # ---------------------------------------------------------
++    # Calibration
++    # ---------------------------------------------------------
+ 
+     capture_lock = threading.Lock()
+ 
+     calibration_worker = CalibrationWorker(
+         controller,
+         audio,
+         capture_lock,
+     )
+ 
+-    calibration_worker.start()    
++    calibration_worker.start()
+ 
+     logging.info(
+         "Starting edge-audio"
+     )
+ 
+@@ -117,60 +143,73 @@ def main():
+     logging.info(
+         "Channels: %s",
+         capture_cfg["channels"]
+     )
+ 
++    # ---------------------------------------------------------
++    # Capture loop
++    # ---------------------------------------------------------
++
+     while True:
+ 
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+         # Establish capture identity
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         timestamp, capture_id = get_capture_timestamp()
+ 
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+         # Capture raw audio
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         with capture_lock:
+             raw = audio.record(
+                 capture_cfg["chunk_seconds"]
+             )
+ 
+         # Raw statistics must be calculated before processing.
+         raw_stats = all_channel_stats(raw)
+-        # ---------------------------------------------------------
++
++        # -----------------------------------------------------
+         # Process audio
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         processed = dsp.process(raw)
+ 
+         processed_stats = all_channel_stats(processed)
+ 
+         for channel_index, stats in enumerate(raw_stats):
+-            channel = channel_config(config, channel_index)
++
++            channel = channel_config(
++                config,
++                channel_index
++            )
+ 
+             logging.info(
+                 "RAW     %s Peak %.4f RMS %.4f",
+                 channel["name"],
+                 stats[0],
+                 stats[1],
+             )
+ 
+         for channel_index, stats in enumerate(processed_stats):
+-            channel = channel_config(config, channel_index)
++
++            channel = channel_config(
++                config,
++                channel_index
++            )
+ 
+             logging.info(
+                 "PROCESSED %s Peak %.4f RMS %.4f",
+                 channel["name"],
+                 stats[0],
+                 stats[1],
+             )
+ 
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+         # Save audio artifacts
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         raw_path = save_audio(
+             raw,
+             capture_cfg["sample_rate"],
+             config["output"]["raw_path"],
+@@ -184,35 +223,37 @@ def main():
+             config["output"]["processed_path"],
+             hostname=hostname,
+             capture_id=capture_id
+         )
+ 
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+         # Calculate artifact hashes
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         raw_sha256 = sha256_file(
+             raw_path
+         )
+ 
+         processed_sha256 = sha256_file(
+             processed_path
+         )
+ 
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+         # Build channel metadata
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         channel_metadata = []
+ 
+         for channel_index in range(len(raw_stats)):
++
+             channel = channel_config(
+                 config,
+                 channel_index
+             )
+ 
+             raw_peak, raw_rms = raw_stats[channel_index]
++
+             processed_peak, processed_rms = processed_stats[
+                 channel_index
+             ]
+ 
+             channel_metadata.append({
+@@ -247,13 +288,13 @@ def main():
+                         "rms": processed_rms
+                     }
+                 }
+             })
+ 
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+         # Build metadata
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         metadata = {
+             "schema_version": "1.0",
+ 
+             "capture": {
+@@ -284,13 +325,13 @@ def main():
+             },
+ 
+             "channels": channel_metadata
+         }
+ 
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+         # Save metadata sidecar
+-        # ---------------------------------------------------------
++        # -----------------------------------------------------
+ 
+         metadata_path = save_metadata(
+             metadata,
+             config["output"]["metadata_path"],
+             hostname,
+@@ -317,6 +358,6 @@ def main():
+             metadata_path
+         )
+ 
+ 
+ if __name__ == "__main__":
+-    main()
++    main()
+\ No newline at end of file

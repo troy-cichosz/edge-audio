@@ -1,0 +1,19 @@
+# Local edge-audio capture device. Device numbering may vary by host.
+AUDIO_DEVICE=plughw:3,0
+
+# edge-controller is the control/configuration plane.
+EDGE_CONTROLLER_URL=http://spoo-lin.spoocannon.com:8080
+EDGE_CONTROLLER_TIMEOUT=5
+EDGE_SERVICE_ID=edge-audio
+EDGE_SERVICE_NAME=edge-audio
+EDGE_SERVICE_VERSION=${SER_VER}
+
+# Local edge-time Capture Time Context endpoint.
+# Leave EDGE_TIME_URL empty to derive the endpoint dynamically from the hosting
+# node's hostname and the standard edge-time host port (8095).
+# The normal deployment should not hardcode a node hostname here.
+# If an explicit override is required, use the hosting node's hostname/address
+# and exposed host port. Do NOT use a Docker service/container name.
+EDGE_TIME_URL=
+EDGE_TIME_TIMEOUT=2
+EDGE_AUDIO_TIMING_DEBUG=1

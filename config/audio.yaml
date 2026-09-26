@@ -1,0 +1,29 @@
+capture:
+  device: plughw:3,0
+  sample_rate: 48000
+  channels: 2
+  dtype: int32
+  chunk_seconds: 60
+
+channels:
+  - id: 0
+    name: left
+    enabled: true
+    gain_db: 0
+
+  - id: 1
+    name: right
+    enabled: true
+    gain_db: 0
+
+processing:
+  highpass_hz: 80
+  limiter_db: -3
+
+output:
+  raw_path: /recordings/raw
+  processed_path: /recordings/processed
+  metadata_path: /metadata
+
+logging:
+  level: INFO
