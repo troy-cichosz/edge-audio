@@ -1,4 +1,4 @@
-# edge-audio — Sprint Status
+# edge-audio - Sprint Status
 
 **Current sprint:** Calibration refinement / evidence integration preparation  
 **Status:** ACTIVE  
@@ -20,9 +20,9 @@ Refine the controller-managed audio calibration workflow without creating a seco
 ## Current Work
 
 ```
-measure → review → recommend → operator adjustment
-        → save controller configuration → capture
-        → measure again → verify
+measure -> review -> recommend -> operator adjustment
+        -> save controller configuration -> capture
+        -> measure again -> verify
 ```
 
 The existing controller configuration API remains the persistence mechanism.

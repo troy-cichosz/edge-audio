@@ -517,22 +517,22 @@ Repository structure:
 
 ```text
 edge-audio/
-├── docker-compose.yml
-├── Dockerfile
-├── requirements.txt
-├── .env
-├── config/
-│   └── audio.yaml
-├── app/
-│   ├── main.py
-│   ├── config.py
-│   ├── capture.py
-│   ├── dsp.py
-│   └── recorder.py
-├── recordings/
-│   ├── raw/
-│   └── processed/
-└── logs/
++-- docker-compose.yml
++-- Dockerfile
++-- requirements.txt
++-- .env
++-- config/
+|   +-- audio.yaml
++-- app/
+|   +-- main.py
+|   +-- config.py
+|   +-- capture.py
+|   +-- dsp.py
+|   +-- recorder.py
++-- recordings/
+|   +-- raw/
+|   +-- processed/
++-- logs/
 ```
 
 CI/CD has been established for the project.

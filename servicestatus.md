@@ -1,4 +1,4 @@
-# edge-audio — Service Status
+# edge-audio - Service Status
 
 **Purpose:** Current development phase and maturity of the edge-audio service.  
 **Status:** Working MVP / active refinement  
@@ -6,7 +6,7 @@
 
 ## Current Phase
 
-**Phase 1 — Evidence-Facing Temporal Integration: COMPLETE / VERIFIED**
+**Phase 1 - Evidence-Facing Temporal Integration: COMPLETE / VERIFIED**
 
 The service has a working local-first audio capture pipeline and has completed integration with local `edge-time` Capture Time Context.
 

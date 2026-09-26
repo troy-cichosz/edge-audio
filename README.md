@@ -207,7 +207,7 @@ Example:
 Supported duration:
 
 ```text
-1–60 seconds
+1-60 seconds
 ```
 
 The edge service polls:
@@ -437,24 +437,24 @@ The local edge-time Capture Time Context integration is implemented and verified
 
 `edge-audio` follows these principles:
 
-1. **Local-first** — audio capture must continue when the controller is unavailable.
-2. **Evidence preservation** — raw recordings are not modified by later processing or calibration.
-3. **Controller-managed configuration** — persistent operational settings belong in the controller rather than being baked into container images.
-4. **Generic service architecture** — nodes may host multiple services.
-5. **Hardware-aware configuration** — device-specific values must remain configurable.
-6. **Reproducibility** — capture, processing, configuration, calibration, and timing state should ultimately be recorded with the evidence.
-7. **No cloud dependency** — the edge service is designed to operate locally.
-8. **Direct local timing context** — evidence services obtain timing context from the local `edge-time` service rather than routing time through the controller.
-9. **Dynamic node identity** — normal local service-to-service endpoints derive the hosting node identity from the runtime host rather than hardcoding individual node names.
+1. **Local-first** - audio capture must continue when the controller is unavailable.
+2. **Evidence preservation** - raw recordings are not modified by later processing or calibration.
+3. **Controller-managed configuration** - persistent operational settings belong in the controller rather than being baked into container images.
+4. **Generic service architecture** - nodes may host multiple services.
+5. **Hardware-aware configuration** - device-specific values must remain configurable.
+6. **Reproducibility** - capture, processing, configuration, calibration, and timing state should ultimately be recorded with the evidence.
+7. **No cloud dependency** - the edge service is designed to operate locally.
+8. **Direct local timing context** - evidence services obtain timing context from the local `edge-time` service rather than routing time through the controller.
+9. **Dynamic node identity** - normal local service-to-service endpoints derive the hosting node identity from the runtime host rather than hardcoding individual node names.
 
 ---
 
 ## Related Edge Services
 
-* `edge-controller` — node/service management, configuration, calibration jobs, and service status.
-* `edge-time` — local time-source selection, capture-time context, synchronization/consistency state, and signed time attestations.
-* `edge-video` — Raspberry Pi CSI camera evidence capture.
-* `edge-gps` — GNSS hardware and observations that can feed authoritative timing into `edge-time`.
+* `edge-controller` - node/service management, configuration, calibration jobs, and service status.
+* `edge-time` - local time-source selection, capture-time context, synchronization/consistency state, and signed time attestations.
+* `edge-video` - Raspberry Pi CSI camera evidence capture.
+* `edge-gps` - GNSS hardware and observations that can feed authoritative timing into `edge-time`.
 
 The `edge-video` service follows the same local-first and generic node/service architecture and uses immutable finalized evidence with accompanying metadata/manifests.
 
